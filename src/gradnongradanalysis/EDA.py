@@ -29,6 +29,31 @@ import matplotlib.pyplot as plt
 
 
 class EDA:
+    """
+    The Exploratory Data Analysis (EDA) class provides a comprehensive suite of functions to perform various data analysis tasks.
+    It is specifically designed to work with data related to academic majors and their impact on employment outcomes. The class
+    offers methods to compute summary statistics, handle missing values, analyze and sort majors based on different criteria,
+    and compare employment outcomes between graduates and non-graduates.
+
+    Methods include:
+    - get_summary_statistics: Computes and returns summary statistics for each numeric column.
+    - get_missing_values_info: Calculates and returns the count of missing values in each column.
+    - fill_missing_values: Fills missing values in the DataFrame.
+    - analyze_and_sort_majors: Analyzes and sorts academic majors based on employment rate and median salary.
+    - calculate_average_grad_premium: Calculates and sorts the average graduate premium by major categories.
+    - compare_graduate_outcomes: Compares employment outcomes between graduates and non-graduates.
+    - calculate_employment_rates: Calculates employment rates for different major categories.
+
+    Attributes:
+    - df (DataFrame): A pandas DataFrame containing the data to be analyzed.
+
+    This class is particularly useful for educational institutions, policymakers, and researchers focusing on
+    the correlation between education and career success.
+
+    Parameters:
+    - df (DataFrame): A pandas DataFrame with relevant data for analysis.
+    """
+
     def __init__(self, df):
         self.df = df
 

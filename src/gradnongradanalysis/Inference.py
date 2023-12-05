@@ -36,6 +36,30 @@ import matplotlib.pyplot as plt
 
 
 class Inference:
+    """
+    The Inference class is designed for visualizing various aspects of employment outcomes based on academic majors.
+    It provides a series of plotting methods to explore and present data in an intuitive and informative manner.
+    This class is especially useful for analyzing relationships between academic qualifications and employment metrics
+    such as employment rates, median salaries, and graduate premiums.
+
+    Methods include:
+    - plot_employment_rate_vs_median_salary: Creates a scatter plot to visualize the relationship between employment rates
+      and median salaries for different majors.
+    - plot_graduate_premium: Generates a bar plot showing the average graduate premium by major categories.
+    - plot_graduate_outcomes: Produces a series of bar plots comparing employment outcomes for top majors.
+    - plot_employment_rates: Visualizes employment rates by major category using a horizontal bar plot.
+
+    Attributes:
+    - df (DataFrame): A pandas DataFrame containing the data to be analyzed and visualized.
+
+    This class is valuable for researchers, educators, and policy makers who wish to understand and communicate
+    the impact of higher education on career outcomes. It allows for a clear and comparative visualization of
+    how different academic fields fare in the job market.
+
+    Parameters:
+    - df (DataFrame): A pandas DataFrame containing relevant data for visualization.
+    """
+
     def __init__(self, df):
         self.df = df
 

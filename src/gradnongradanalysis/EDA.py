@@ -29,8 +29,8 @@ import matplotlib.pyplot as plt
 
 
 class EDA:
-    def __init__(self,df):
-        self.df = df 
+    def __init__(self, df):
+        self.df = df
 
     def get_summary_statistics(self):
         """
@@ -50,7 +50,6 @@ class EDA:
         summary_stats = self.df.describe()
         return summary_stats
 
-
     def get_missing_values_info(self):
         """
         Calculates and returns the count of missing (null) values in each column of the given DataFrame.
@@ -66,7 +65,6 @@ class EDA:
         """
         missing_values_info = self.df.isnull().sum()
         return missing_values_info
-
 
     def fill_missing_values(self):
         """
@@ -84,17 +82,16 @@ class EDA:
         """
 
         # Impute numerical columns with median
-        numerical_columns = self.df.select_dtypes(include=['int64', 'float64']).columns
+        numerical_columns = self.df.select_dtypes(include=["int64", "float64"]).columns
         for col in numerical_columns:
             self.df[col].fillna(self.df[col].median(), inplace=True)
 
         # Impute categorical columns with mode
-        categorical_columns = self.df.select_dtypes(include=['object']).columns
+        categorical_columns = self.df.select_dtypes(include=["object"]).columns
         for col in categorical_columns:
             self.df[col].fillna(self.df[col].mode()[0], inplace=True)
 
         return self.df
-
 
     def analyze_and_sort_majors(self):
         """
@@ -105,7 +102,7 @@ class EDA:
         median salaries in descending order.
 
         Parameters:
-        - self.df (DataFrame): A pandas DataFrame containing data about different academic majors, 
+        - self.df (DataFrame): A pandas DataFrame containing data about different academic majors,
         including the number of graduates and employed graduates.
 
         Returns:
@@ -113,19 +110,27 @@ class EDA:
         """
 
         # Calculate employment rate as the ratio of employed graduates to total graduates
-        self.df['Employment_Rate'] = self.df['Grad_employed'] / self.df['Grad_total']
+        self.df["Employment_Rate"] = self.df["Grad_employed"] / self.df["Grad_total"]
 
         # Select relevant columns for analysis
-        analysis_columns = ['Major', 'Major_category', 'Grad_total', 'Grad_employed', 'Employment_Rate', 'Grad_median']
+        analysis_columns = [
+            "Major",
+            "Major_category",
+            "Grad_total",
+            "Grad_employed",
+            "Employment_Rate",
+            "Grad_median",
+        ]
 
         # Analyze each major
         majors_analysis = self.df[analysis_columns]
 
         # Sort the data by Employment Rate and Median Salary for better visualization
-        sorted_majors = majors_analysis.sort_values(by=['Employment_Rate', 'Grad_median'], ascending=[False, False])
+        sorted_majors = majors_analysis.sort_values(
+            by=["Employment_Rate", "Grad_median"], ascending=[False, False]
+        )
 
         return sorted_majors
-
 
     def calculate_average_grad_premium(self):
         """
@@ -145,16 +150,19 @@ class EDA:
         """
 
         # Calculate the graduate premium for each major
-        self.df['Grad_Premium'] = self.df['Grad_median'] - self.df['Nongrad_median']
+        self.df["Grad_Premium"] = self.df["Grad_median"] - self.df["Nongrad_median"]
 
         # Group the data by major category and calculate the average graduate premium
-        average_premium_by_category = self.df.groupby('Major_category')['Grad_Premium'].mean()
+        average_premium_by_category = self.df.groupby("Major_category")[
+            "Grad_Premium"
+        ].mean()
 
         # Sort the results for better visualization
-        sorted_premium_by_category = average_premium_by_category.sort_values(ascending=False)
+        sorted_premium_by_category = average_premium_by_category.sort_values(
+            ascending=False
+        )
 
         return sorted_premium_by_category
-
 
     def compare_graduate_outcomes(self):
         """
@@ -177,22 +185,38 @@ class EDA:
         """
 
         # Calculating employment and unemployment rates
-        self.df['Grad_employment_rate'] = self.df['Grad_employed'] / self.df['Grad_total']
-        self.df['Nongrad_employment_rate'] = self.df['Nongrad_employed'] / self.df['Nongrad_total']
-        self.df['Grad_unemployment_rate'] = self.df['Grad_unemployed'] / self.df['Grad_total']
-        self.df['Nongrad_unemployment_rate'] = self.df['Nongrad_unemployed'] / self.df['Nongrad_total']
+        self.df["Grad_employment_rate"] = (
+            self.df["Grad_employed"] / self.df["Grad_total"]
+        )
+        self.df["Nongrad_employment_rate"] = (
+            self.df["Nongrad_employed"] / self.df["Nongrad_total"]
+        )
+        self.df["Grad_unemployment_rate"] = (
+            self.df["Grad_unemployed"] / self.df["Grad_total"]
+        )
+        self.df["Nongrad_unemployment_rate"] = (
+            self.df["Nongrad_unemployed"] / self.df["Nongrad_total"]
+        )
 
         # Comparing median salaries
-        self.df['Median_salary_difference'] = self.df['Grad_median'] - self.df['Nongrad_median']
+        self.df["Median_salary_difference"] = (
+            self.df["Grad_median"] - self.df["Nongrad_median"]
+        )
 
         # Organizing the data for analysis
-        comparison_df = self.df[['Major', 'Grad_employment_rate', 'Nongrad_employment_rate', 
-                                'Grad_unemployment_rate', 'Nongrad_unemployment_rate', 
-                                'Median_salary_difference', 'Grad_total']]
+        comparison_df = self.df[
+            [
+                "Major",
+                "Grad_employment_rate",
+                "Nongrad_employment_rate",
+                "Grad_unemployment_rate",
+                "Nongrad_unemployment_rate",
+                "Median_salary_difference",
+                "Grad_total",
+            ]
+        ]
 
         return comparison_df
-    
-
 
     def calculate_employment_rates(self):
         """
@@ -210,31 +234,28 @@ class EDA:
         pd.DataFrame: A DataFrame with each major category and its corresponding employment rate, sorted in
                     descending order of the employment rate.
 
-        
+
         """
 
         # Grouping the data by 'Major_category' and calculating the aggregated data
-        grouped_data = self.df.groupby('Major_category').agg({
-            'Grad_employed': 'sum',  # Total number of graduates employed
-            'Grad_unemployed': 'sum',  # Total number of graduates unemployed
-            'Grad_total': 'sum'  # Total number of graduates
-        }).reset_index()
+        grouped_data = (
+            self.df.groupby("Major_category")
+            .agg(
+                {
+                    "Grad_employed": "sum",  # Total number of graduates employed
+                    "Grad_unemployed": "sum",  # Total number of graduates unemployed
+                    "Grad_total": "sum",  # Total number of graduates
+                }
+            )
+            .reset_index()
+        )
 
         # Calculating the employment rate for each major category
-        grouped_data['Employment_Rate'] = grouped_data['Grad_employed'] / grouped_data['Grad_total']
+        grouped_data["Employment_Rate"] = (
+            grouped_data["Grad_employed"] / grouped_data["Grad_total"]
+        )
 
         # Sorting the data by Employment Rate in descending order
-        sorted_data = grouped_data.sort_values(by='Employment_Rate', ascending=False)
+        sorted_data = grouped_data.sort_values(by="Employment_Rate", ascending=False)
 
-        return sorted_data[['Major_category', 'Employment_Rate']]
-
-
-
-
-
-
-
-
-
-
-    
+        return sorted_data[["Major_category", "Employment_Rate"]]

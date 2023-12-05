@@ -1,5 +1,5 @@
 """
-Data Summary Module.
+Data Summary Module.  
 
 This module contains the DataSummary class which provides various methods for summarizing a dataset. 
 The class is designed to be used with pandas DataFrames and offers functionalities like printing a 

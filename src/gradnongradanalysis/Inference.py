@@ -1,31 +1,25 @@
 """
-Data Visualization Module for Graduate Employment Data Analysis
+Employment Outcomes Analysis
 
-This module contains the Inference class, designed to provide a range of visualization functionalities
-for exploring and interpreting graduate employment data. The class offers methods to create informative
-and interactive plots that can help in understanding the trends, relationships, and distributions within
-the data.
+This module provides functionality for analyzing and visualizing employment outcomes 
+based on academic majors and other relevant factors. It includes the Inference class, 
+which contains methods for generating insightful plots and statistical models to 
+understand the relationship between academic qualifications and employment metrics.
 
-The Inference class includes methods for the following visualizations:
+Key features:
+- Visualization of employment rates, median salaries, and graduate premiums based on academic majors.
+- Comparative analysis of employment outcomes for graduates versus non-graduates.
+- Machine learning model training and evaluation to predict employment outcomes.
 
-- `plot_employment_rate_vs_median_salary(sorted_majors)`: Generates a scatter plot showing the relationship
-  between employment rates and median salaries for different majors.
+The module is intended for use by researchers, educators, and policymakers who are 
+interested in the impact of academic qualifications on career outcomes. It is also 
+useful for students and career advisors seeking data-driven insights into the job market.
 
-- `plot_graduate_premium(sorted_premium_by_category)`: Creates a bar plot to visualize the average graduate
-  premium by major categories.
-
-- `plot_graduate_outcomes(top_n)`: Produces a series of bar plots comparing employment outcomes for the top 'n'
-  majors based on the total number of graduates. It includes employment rates, unemployment rates, and median salary
-  differences.
-
-- `plot_employment_rates(sorted_data)`: Generates a horizontal bar plot to visualize employment rates by major
-  category.
-
-Each method in the Inference class is designed to make the analysis of graduate employment data more intuitive and
-accessible, providing insights through clear and concise visual representations. These visualizations can be
-particularly useful for educational institutions, policy makers, and students in understanding the employment
-landscape and making informed decisions.
-
+Dependencies:
+- pandas for data manipulation
+- numpy for numerical operations
+- seaborn and matplotlib for data visualization
+- scikit-learn for machine learning models and preprocessing
 """
 
 
@@ -33,31 +27,50 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+import warnings
+
+warnings.filterwarnings("ignore")
 
 
 class Inference:
     """
-    The Inference class is designed for visualizing various aspects of employment outcomes based on academic majors.
-    It provides a series of plotting methods to explore and present data in an intuitive and informative manner.
-    This class is especially useful for analyzing relationships between academic qualifications and employment metrics
-    such as employment rates, median salaries, and graduate premiums.
+    Inference Class for Employment Outcomes Analysis
 
-    Methods include:
-    - plot_employment_rate_vs_median_salary: Creates a scatter plot to visualize the relationship between employment rates
-      and median salaries for different majors.
-    - plot_graduate_premium: Generates a bar plot showing the average graduate premium by major categories.
-    - plot_graduate_outcomes: Produces a series of bar plots comparing employment outcomes for top majors.
-    - plot_employment_rates: Visualizes employment rates by major category using a horizontal bar plot.
+    This class is designed to analyze and visualize employment outcomes based on
+    academic majors. It provides methods for plotting various aspects of employment
+    data, helping users to explore relationships between academic qualifications and
+    employment metrics such as employment rates, median salaries, and graduate premiums.
+
+    The class is valuable for visual analysis, offering an intuitive understanding
+    of how different academic fields fare in terms of career prospects.
 
     Attributes:
-    - df (DataFrame): A pandas DataFrame containing the data to be analyzed and visualized.
+    - df (pandas.DataFrame): A DataFrame containing the data for analysis.
 
-    This class is valuable for researchers, educators, and policy makers who wish to understand and communicate
-    the impact of higher education on career outcomes. It allows for a clear and comparative visualization of
-    how different academic fields fare in the job market.
+    Methods:
+    - plot_employment_rate_vs_median_salary: Visualizes the relationship between
+      employment rates and median salaries for different majors.
+    - plot_graduate_premium: Shows the average graduate premium by major category.
+    - plot_graduate_outcomes: Compares employment outcomes for top majors.
+    - plot_employment_rates: Displays employment rates by major category.
+    - prepare_data: Prepares the dataset for analysis by creating a binary target variable.
+    - select_features: Selects and returns relevant features for modeling.
+    - split_data: Splits the dataset into training and testing sets.
+    - train_and_evaluate: Trains and evaluates multiple machine learning models.
 
-    Parameters:
-    - df (DataFrame): A pandas DataFrame containing relevant data for visualization.
+    The Inference class is intended for researchers, educators, policy makers, as well
+    as students and career advisors, providing a clear visualization and analysis of
+    employment outcomes across various academic disciplines.
     """
 
     def __init__(self, df):
@@ -230,3 +243,69 @@ class Inference:
         plt.title("Employment Rates by Major Category")
         plt.gca().invert_yaxis()  # Invert y-axis for better readability
         plt.show()
+
+    def select_features(self, target_column):
+        """
+        Selects relevant features for the classification task.
+
+        Parameters:
+        target_column (str): The name of the target column.
+
+        Returns:
+        pd.DataFrame: A DataFrame with selected features.
+        """
+        features = self.df.select_dtypes(include=["float64", "int64"]).drop(
+            [target_column, "Target"], axis=1
+        )
+        return features
+
+    def split_data(self, features, target, test_size=0.3, random_state=42):
+        """
+        Splits the data into training and test sets.
+
+        Parameters:
+        features (pd.DataFrame): The features of the dataset.
+        target (pd.Series): The target variable.
+        test_size (float, optional): The proportion of the dataset to include in the test split. Defaults to 0.3.
+        random_state (int, optional): Controls the shuffling applied to the data before applying the split. Defaults to 42.
+
+        Returns:
+        tuple: A tuple containing the training and test sets (X_train, X_test, y_train, y_test).
+        """
+        X_train, X_test, y_train, y_test = train_test_split(
+            features, target, test_size=test_size, random_state=random_state
+        )
+        return X_train, X_test, y_train, y_test
+
+    def train_and_evaluate(self, X_train, X_test, y_train, y_test):
+        """
+        Trains multiple classifiers and evaluates their performance.
+
+        Parameters:
+        X_train (pd.DataFrame): Training set features.
+        X_test (pd.DataFrame): Test set features.
+        y_train (pd.Series): Training set target.
+        y_test (pd.Series): Test set target.
+
+        Returns:
+        dict: A dictionary containing the accuracy scores and classification reports for each classifier.
+        """
+        classifiers = {
+            "Logistic Regression": LogisticRegression(),
+            "SVM": SVC(),
+            "Random Forest": RandomForestClassifier(),
+            "KNN": KNeighborsClassifier(),
+            "Decision Tree": DecisionTreeClassifier(),
+            "Naive Bayes": GaussianNB(),
+        }
+
+        results = {}
+        for name, clf in classifiers.items():
+            pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", clf)])
+            pipeline.fit(X_train, y_train)
+            y_pred = pipeline.predict(X_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            report = classification_report(y_test, y_pred)
+            results[name] = {"accuracy": accuracy, "report": report}
+
+        return results

@@ -1,26 +1,23 @@
 """
-Exploratory Data Analysis (EDA) Module
+Employment and Academic Major Analysis
 
-This module contains the EDA class which is designed for performing comprehensive exploratory data 
-analysis on graduate employment data. The class offers a range of functionalities to analyze, 
-process, and visualize data related to various aspects of graduate outcomes, including employment 
-rates, salary comparisons, and handling of missing values.
+This module contains tools and functionalities for conducting an exploratory data analysis 
+(EDA) on datasets related to academic majors and their impact on employment outcomes. The primary 
+class, 'EDA', offers a comprehensive suite of methods for various data analysis tasks, including 
+calculating summary statistics, handling missing values, and analyzing employment outcomes.
 
-The EDA class provides the following methods:
+Key Features:
+- Summary statistics calculation for numerical data.
+- Missing values analysis and imputation for both numerical and categorical data.
+- Detailed analysis of majors based on employment rates and median salaries.
+- Calculation and comparison of graduate premiums across different major categories.
+- Comparison of employment outcomes for graduates and non-graduates.
 
-- `get_summary_statistics()`: Computes summary statistics like mean, median, standard deviation, etc., 
-  for each numeric column in the DataFrame.
-- `get_missing_values_info()`: Calculates the count of missing values in each column of the DataFrame.
-- `fill_missing_values()`: Fills missing values in the DataFrame, handling both numerical and categorical data.
-- `analyze_and_sort_majors()`: Analyzes and sorts academic majors based on employment rate and median salary.
-- `calculate_average_grad_premium()`: Calculates and sorts the average graduate premium by major categories.
-- `compare_graduate_outcomes()`: Compares employment outcomes between graduates and non-graduates for each major.
-- `calculate_employment_rates()`: Calculates employment rates for different major categories and sorts them.
-
-The module is designed to provide an easy and intuitive interface for data analysts to perform 
-detailed analyses of graduate employment data. It can be particularly useful in educational and policy-making 
-contexts where understanding the employment landscape of graduates is crucial.
+The module is designed to aid educational institutions, policymakers, and researchers in understanding
+the relationship between academic qualifications and career outcomes. It provides essential tools for 
+data-driven insights into the job market and the value of different academic majors.
 """
+
 
 import pandas as pd
 import numpy as np
@@ -30,28 +27,32 @@ import matplotlib.pyplot as plt
 
 class EDA:
     """
-    The Exploratory Data Analysis (EDA) class provides a comprehensive suite of functions to perform various data analysis tasks.
-    It is specifically designed to work with data related to academic majors and their impact on employment outcomes. The class
-    offers methods to compute summary statistics, handle missing values, analyze and sort majors based on different criteria,
-    and compare employment outcomes between graduates and non-graduates.
+    Exploratory Data Analysis (EDA) Class for Academic Majors and Employment Outcomes
 
-    Methods include:
-    - get_summary_statistics: Computes and returns summary statistics for each numeric column.
-    - get_missing_values_info: Calculates and returns the count of missing values in each column.
-    - fill_missing_values: Fills missing values in the DataFrame.
-    - analyze_and_sort_majors: Analyzes and sorts academic majors based on employment rate and median salary.
-    - calculate_average_grad_premium: Calculates and sorts the average graduate premium by major categories.
+    This class provides a suite of functions to perform comprehensive data analysis on academic majors
+    and their impact on employment outcomes. It is designed to work with data that includes various
+    metrics related to academic majors such as employment rates, median salaries, and graduate premiums.
+
+    The class offers a range of methods for computing summary statistics, analyzing missing values,
+    and sorting majors based on different criteria. It also facilitates the comparison of employment
+    outcomes between graduates and non-graduates and calculates employment rates for different major categories.
+
+    Methods:
+    - get_summary_statistics: Computes and returns summary statistics for numeric columns.
+    - get_missing_values_info: Provides a count of missing values in each column.
+    - fill_missing_values: Handles missing values in the dataset.
+    - analyze_and_sort_majors: Analyzes majors based on employment rate and median salary.
+    - calculate_average_grad_premium: Calculates the average graduate premium by major categories.
     - compare_graduate_outcomes: Compares employment outcomes between graduates and non-graduates.
-    - calculate_employment_rates: Calculates employment rates for different major categories.
+    - calculate_employment_rates: Computes employment rates for various major categories.
+    - prepare_data: Prepares the dataset for analysis by creating a binary target variable.
 
     Attributes:
-    - df (DataFrame): A pandas DataFrame containing the data to be analyzed.
+    - df (pandas.DataFrame): The DataFrame containing the data to be analyzed.
 
-    This class is particularly useful for educational institutions, policymakers, and researchers focusing on
-    the correlation between education and career success.
-
-    Parameters:
-    - df (DataFrame): A pandas DataFrame with relevant data for analysis.
+    The EDA class is an invaluable tool for educational researchers, policy analysts, and
+    data scientists interested in exploring the relationship between education and career
+    outcomes, providing them with robust methods for in-depth data analysis.
     """
 
     def __init__(self, df):
@@ -284,3 +285,19 @@ class EDA:
         sorted_data = grouped_data.sort_values(by="Employment_Rate", ascending=False)
 
         return sorted_data[["Major_category", "Employment_Rate"]]
+
+    def prepare_data(self, target_column):
+        """
+        Prepares the dataset for classification by creating a binary target variable.
+
+        Parameters:
+        target_column (str): The name of the column to be used as the target for classification.
+
+        Returns:
+        pd.DataFrame: The modified dataset with a new binary target column 'Target'.
+        """
+        median_value = self.df[target_column].median()
+        self.df["Target"] = self.df[target_column].apply(
+            lambda x: 1 if x > median_value else 0
+        )
+        return self.df
